@@ -1,3 +1,3 @@
 ## Emilly
 
-> Javascript library to build modern interfaces.
+> My own data-binding implementation engine.
