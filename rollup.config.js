@@ -5,7 +5,7 @@ import pkg from './package.json';
 export default [
 	// browser-friendly UMD build
 	{
-		input: 'src/main.js',
+		input: 'src/emilly.js',
 		output: {
 			file: pkg.browser,
 			format: 'umd'
@@ -24,8 +24,7 @@ export default [
 	// an array for the `output` option, where we can specify 
 	// `file` and `format` for each target)
 	{
-		input: 'src/main.js',
-		external: ['fingerprintjs2'],
+		input: 'src/emilly.js',
 		output: [
 			{ file: pkg.main, format: 'cjs' },
 			{ file: pkg.module, format: 'es' }
