@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Emilly <3</title>
+</head>
+<body>
+  <div id="app">
+    <h1>{{title}}</h1>
+    <p>My awesome paragrapher as well</p>
+    <ul>
+      <li>List 1</li>
+      <li>List 2</li>
+      <li>List 3</li>
+    </ul>
+    <button ly-click="changeTitleName">Change title text</button>
+  </div>
+
+  <script src="../dist/emilly.umd.js"></script>
+  <script>
+
+    const emilly = new Emilly({
+      container: 'app',
+      observe: () => ({
+        title: 'My awesome title <3',
+        age: 19
+      }),
+      methods: {
+        changeTitleName () {
+          this.title = 'Another title'
+        }
+      }
+    })
+
+  </script>
+</body>
+</html>
