@@ -39,11 +39,12 @@ const lyIf = function (elements) {
   elements.map((element) => {
     const key = element.getAttribute('ly-if');
     const parent = element.parentNode;
+    const nextNode = element.nextElementSibling;
 
     this.$Observable.register({
       name: key,
       handler: () => this.ob[key]
-        ? parent.appendChild(element)
+        ? parent.insertBefore(element, nextNode)
         : parent.removeChild(element)
     });
   });

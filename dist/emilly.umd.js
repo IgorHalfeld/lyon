@@ -302,11 +302,12 @@ var lyIf = function lyIf(elements) {
   elements.map(function (element) {
     var key = element.getAttribute('ly-if');
     var parent = element.parentNode;
+    var nextNode = element.nextElementSibling;
 
     _this.$Observable.register({
       name: key,
       handler: function handler() {
-        return _this.ob[key] ? parent.appendChild(element) : parent.removeChild(element);
+        return _this.ob[key] ? parent.insertBefore(element, nextNode) : parent.removeChild(element);
       }
     });
   });
