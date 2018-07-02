@@ -8,14 +8,14 @@
 </head>
 <body>
   <div id="app">
-    <h1>{{title}}</h1>
-    <p>My awesome paragrapher as well</p>
-    <ul>
-      <li>List 1</li>
-      <li>List 2</li>
-      <li>List 3</li>
+    <h1 ly-bind="title"></h1>
+    <p ly-if="status">My awesome paragrapher as well <span ly-bind="age"></span></p>
+    <ul ly-for="item in list">
+      <li>{{item}}</li>
     </ul>
+    <input type="text" ly-model="title">
     <button ly-click="changeTitleName">Change title text</button>
+    <button ly-click="changeStatus">Change status</button>
   </div>
 
   <script src="../dist/emilly.umd.js"></script>
@@ -25,11 +25,17 @@
       container: 'app',
       observe: () => ({
         title: 'My awesome title <3',
-        age: 19
+        age: 19,
+        status: true,
+        list: ['Hello', 'Second', 332]
       }),
       methods: {
         changeTitleName () {
           this.title = 'Another title'
+        },
+        changeStatus () {
+          this.status = !this.status
+          console.log('* Status', this.status)
         }
       }
     })

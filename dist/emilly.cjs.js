@@ -18,70 +18,104 @@ class Observer {
   }
 }
 
-const Core = (data) => {
-  const $Observable = new Observer(data);
-  const ob = new Proxy(data, {
-    get (target, propertyKey) {
-      return target[propertyKey]
-    },
-    set(target, propertyKey, newValue) {
-      target[propertyKey] = newValue;
-      $Observable.notify(propertyKey);
-    }
+// import Compiler from './index'
+
+const lyFor = function (elements) {
+  console.log('lyFor', this);
+  elements.map((element) => {
+    const [ variable, array ] = element
+      .getAttribute('ly-for')
+      .trim()
+      .split('in');
+    // const template = element.innerHTML
+    // Compiler(template, this.ob)
+
+    console.log('variable', variable);
+    console.log('array', array);
   });
-
-  return { ob, $Observable }
 };
 
-const Compiler = ({ template = '', ob = {} }) => {
-  const templateMatchVars = template.match(/\{\{.*\}\}/g);
-  let templateTranspiled = '';
+const lyIf = function (elements) {
+  elements.map((element) => {
+    const key = element.getAttribute('ly-if');
+    const parent = element.parentNode;
 
-  const templateVarsLength = templateMatchVars.length;
-  for (let i = 0, l = templateVarsLength; i < l; i++) {
-    const templateVar = templateMatchVars[i];
-    const varWithoutBrackets = templateVar.replace(/}}|{{/g,'');
-    templateTranspiled = template.replace(templateVar, ob[varWithoutBrackets]);
-  }
-
-  return templateTranspiled
-};
-
-const ParserMethods = (template) => {
-  console.log('template', template);
-  const elements = document.querySelector('[ly-click]');
-  console.log('templateMatchVars methods', elements);
-};
-
-class Emilly {
-  constructor ({ container, observe = () => ({}) }) {
-    const target = document.getElementById(container);
-    const { ob, $Observable } = Core(observe());
-    this.ob = ob;
-    this.$Observable = $Observable;
-
-    this.makeReactive({ element: target });
-    const template = Compiler({
-      ob: this.ob,
-      template: target.innerHTML
+    this.$Observable.register({
+      name: key,
+      handler: () => this.ob[key]
+        ? parent.appendChild(element)
+        : parent.removeChild(element)
     });
-    target.innerHTML = template;
-    ParserMethods(target.innerHTML);
+  });
+};
 
+const lyModel = function (elements) {
+  const self = this;
+  elements.map((element) => {
+    const key = element.getAttribute('ly-model');
+
+    element.addEventListener('input', ({ target: { value } }) => {
+      self.ob[key] = value;
+    }, false);
+  });
+};
+
+class AbstractHelpers {
+  constructor (data) {
+    const self = this;
+    this.$Observable = new Observer(data);
+    this.ob = new Proxy(data, {
+      get (target, propertyKey) {
+        return target[propertyKey]
+      },
+      set(target, propertyKey, newValue) {
+        target[propertyKey] = newValue;
+        self.$Observable.notify(propertyKey);
+        return true
+      }
+    });
+    this.compileBindingsAndGetRefs();
+    this.bootstrapDirectives();
   }
 
-  makeReactive ({ element }) {
-    Object.keys(this.ob)
-      .forEach((key) => this.$Observable.register({
-          name: key,
-          handler: () => {
-            element.innerHTML = Compiler({
-              ob: this.ob,
-              template: element.innerHTML
-            });
-          }
-        })
-      );
+  bootstrapDirectives () {
+    const forStatments = [...document.querySelectorAll('[ly-for]')];
+    const ifStatments = [...document.querySelectorAll('[ly-if]')];
+    const modelStatments = [...document.querySelectorAll('[ly-model]')];
+
+    lyFor.call(this, forStatments);
+    lyIf.call(this, ifStatments);
+    lyModel.call(this, modelStatments);
+  }
+
+  compileBindingsAndGetRefs () {
+    const elements = [...document.querySelectorAll('[ly-bind]')];
+    elements.map((element) => {
+      const key = element.getAttribute('ly-bind');
+      element.textContent = this.ob[key];
+      this.$Observable.register({
+        name: key,
+        handler: () => {
+          element.textContent = this.ob[key];
+        }
+      });
+    });
+  }
+
+  parserMethods (methods) {
+    const elements = [...document.querySelectorAll('[ly-click]')];
+    elements.map((element) => {
+      const methodName = element.getAttribute('ly-click');
+      element.addEventListener('click', methods[methodName].bind(this.ob), false);
+    });
+  }
+}
+
+class Emilly extends AbstractHelpers {
+  constructor ({ container, observe = () => ({}), methods }) {
+    const target = document.getElementById(container);
+    super(observe());
+    this.parserMethods(methods);
   }
 }
 
