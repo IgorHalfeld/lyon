@@ -47,7 +47,7 @@ export default class AbstractHelpers {
     })
   }
 
-  parserMethods (methods) {
+  parseMethods (methods) {
     const elements = [...document.querySelectorAll('[ly-click]')]
     elements.map((element) => {
       const methodName = element.getAttribute('ly-click')

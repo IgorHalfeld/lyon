@@ -1,13 +1,19 @@
 
-export const Compiler = ({ template = '', ob = {} }) => {
+export const Compiler = ({
+  template = '',
+  ob = {},
+  tmpVarName = '',
+  arrayName = ''
+}) => {
   const templateMatchVars = template.match(/\{\{.*\}\}/g)
   let templateTranspiled = ''
 
-  const templateVarsLength = templateMatchVars.length
-  for (let i = 0, l = templateVarsLength; i < l; i++) {
+  const iteratorLength = ob[arrayName].length
+  console.log('iteratorLength', iteratorLength)
+  for (let i = 0, l = iteratorLength; i < l; i++) {
     const templateVar = templateMatchVars[i]
-    const varWithoutBrackets = templateVar.replace(/}}|{{/g,'')
-    templateTranspiled = template.replace(templateVar, ob[varWithoutBrackets])
+    // const varWithoutBrackets = templateVar.replace(/}}|{{/g,'')
+    templateTranspiled = template.replace(templateVar, ob[arrayName][i])
   }
 
   return templateTranspiled

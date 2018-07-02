@@ -279,35 +279,42 @@ var Observer = function () {
   return Observer;
 }();
 
-// import Compiler from './index'
-
 var lyFor = function lyFor(elements) {
+  var _this = this;
+
   console.log('lyFor', this);
   elements.map(function (element) {
     var _element$getAttribute = element.getAttribute('ly-for').trim().split('in'),
         _element$getAttribute2 = slicedToArray(_element$getAttribute, 2),
-        variable = _element$getAttribute2[0],
-        array = _element$getAttribute2[1];
-    // const template = element.innerHTML
-    // Compiler(template, this.ob)
+        tmpVarName = _element$getAttribute2[0],
+        arrayName = _element$getAttribute2[1];
 
-    console.log('variable', variable);
-    console.log('array', array);
+    var template = element.innerHTML;
+    var templateVar = template.match(/\{\{.*\}\}/g)[0];
+    var templateTranspiled = '';
+
+    var iteratorLength = _this.ob[arrayName.trim()].length;
+    for (var i = 0, l = iteratorLength; i < l; i++) {
+      // const varWithoutBrackets = templateVar.replace(/}}|{{/g,'')
+      templateTranspiled += template.replace(templateVar, _this.ob[arrayName.trim()][i]);
+    }
+
+    element.innerHTML = templateTranspiled;
   });
 };
 
 var lyIf = function lyIf(elements) {
-  var _this = this;
+  var _this2 = this;
 
   elements.map(function (element) {
     var key = element.getAttribute('ly-if');
     var parent = element.parentNode;
     var nextNode = element.nextElementSibling;
 
-    _this.$Observable.register({
+    _this2.$Observable.register({
       name: key,
       handler: function handler() {
-        return _this.ob[key] ? parent.insertBefore(element, nextNode) : parent.removeChild(element);
+        return _this2.ob[key] ? parent.insertBefore(element, nextNode) : parent.removeChild(element);
       }
     });
   });
@@ -375,8 +382,8 @@ var AbstractHelpers = function () {
       });
     }
   }, {
-    key: 'parserMethods',
-    value: function parserMethods(methods) {
+    key: 'parseMethods',
+    value: function parseMethods(methods) {
       var _this2 = this;
 
       var elements = [].concat(toConsumableArray(document.querySelectorAll('[ly-click]')));
@@ -405,7 +412,7 @@ var Emilly = function (_AbstractHelpers) {
 
     var _this = possibleConstructorReturn(this, (Emilly.__proto__ || Object.getPrototypeOf(Emilly)).call(this, observe()));
 
-    _this.parserMethods(methods);
+    _this.parseMethods(methods);
     return _this;
   }
 

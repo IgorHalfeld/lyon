@@ -18,20 +18,24 @@ class Observer {
   }
 }
 
-// import Compiler from './index'
-
 const lyFor = function (elements) {
   console.log('lyFor', this);
   elements.map((element) => {
-    const [ variable, array ] = element
+    const [ tmpVarName, arrayName ] = element
       .getAttribute('ly-for')
       .trim()
       .split('in');
-    // const template = element.innerHTML
-    // Compiler(template, this.ob)
+    const template = element.innerHTML;
+    const templateVar = template.match(/\{\{.*\}\}/g)[0];
+    let templateTranspiled = '';
 
-    console.log('variable', variable);
-    console.log('array', array);
+    const iteratorLength = this.ob[arrayName.trim()].length;
+    for (let i = 0, l = iteratorLength; i < l; i++) {
+      // const varWithoutBrackets = templateVar.replace(/}}|{{/g,'')
+      templateTranspiled += template.replace(templateVar, this.ob[arrayName.trim()][i]);
+    }
+
+    element.innerHTML = templateTranspiled;
   });
 };
 
@@ -103,7 +107,7 @@ class AbstractHelpers {
     });
   }
 
-  parserMethods (methods) {
+  parseMethods (methods) {
     const elements = [...document.querySelectorAll('[ly-click]')];
     elements.map((element) => {
       const methodName = element.getAttribute('ly-click');
@@ -116,7 +120,7 @@ class Emilly extends AbstractHelpers {
   constructor ({ container, observe = () => ({}), methods }) {
     const target = document.getElementById(container);
     super(observe());
-    this.parserMethods(methods);
+    this.parseMethods(methods);
   }
 }
 
