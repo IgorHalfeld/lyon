@@ -1,5 +1,3 @@
-'use strict';
-
 class Observer {
   constructor () {
     this.subscribers = {};
@@ -99,11 +97,11 @@ class AbstractHelpers {
   }
 }
 
-class Emilly extends AbstractHelpers {
+class Lyon extends AbstractHelpers {
   constructor ({ observe = () => ({}), methods }) {
     super(observe());
     this.parseMethods(methods);
   }
 }
 
-module.exports = Emilly;
+export default Lyon;

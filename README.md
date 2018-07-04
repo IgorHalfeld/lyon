@@ -1,4 +1,4 @@
-## Emilly
+## Lyon
 
 > My own data-binding implementation engine. see [emilly alive](https://codepen.io/Halfeld/pen/GGaodL)
 
@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="main.css">
-  <title>Emilly <3</title>
+  <title>Lyon <3</title>
 </head>
 <body>
 
@@ -22,10 +22,10 @@
   </div>
 
   <script src="https://unpkg.com/marked@0.3.6"></script>
-  <script src="../dist/emilly.umd.js"></script>
+  <script src="../dist/lyon.umd.js"></script>
   <script>
 
-    const emilly = new Emilly({
+    const lyon = new Lyon({
       observe: () => ({
         markdownParsed: '',
         markdown: ''

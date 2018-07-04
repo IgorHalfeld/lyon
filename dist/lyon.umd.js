@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global.Emilly = factory());
+	(global.Lyon = factory());
 }(this, (function () { 'use strict';
 
 var asyncGenerator = function () {
@@ -376,26 +376,26 @@ var AbstractHelpers = function () {
   return AbstractHelpers;
 }();
 
-var Emilly = function (_AbstractHelpers) {
-  inherits(Emilly, _AbstractHelpers);
+var Lyon = function (_AbstractHelpers) {
+  inherits(Lyon, _AbstractHelpers);
 
-  function Emilly(_ref) {
+  function Lyon(_ref) {
     var _ref$observe = _ref.observe,
         observe = _ref$observe === undefined ? function () {
       return {};
     } : _ref$observe,
         methods = _ref.methods;
-    classCallCheck(this, Emilly);
+    classCallCheck(this, Lyon);
 
-    var _this = possibleConstructorReturn(this, (Emilly.__proto__ || Object.getPrototypeOf(Emilly)).call(this, observe()));
+    var _this = possibleConstructorReturn(this, (Lyon.__proto__ || Object.getPrototypeOf(Lyon)).call(this, observe()));
 
     _this.parseMethods(methods);
     return _this;
   }
 
-  return Emilly;
+  return Lyon;
 }(AbstractHelpers);
 
-return Emilly;
+return Lyon;
 
 })));

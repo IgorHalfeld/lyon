@@ -4,12 +4,12 @@ import pkg from './package.json'
 
 export default [
 	{
-		input: 'src/emilly.js',
+		input: 'src/Lyon.js',
 		output: {
 			file: pkg.browser,
 			format: 'umd'
 		},
-		name: 'Emilly',
+		name: 'Lyon',
 		plugins: [
 			resolve(),
 			babel({
@@ -18,7 +18,7 @@ export default [
 		]
 	},
 	{
-		input: 'src/emilly.js',
+		input: 'src/Lyon.js',
 		output: [
 			{ file: pkg.main, format: 'cjs' },
 			{ file: pkg.module, format: 'es' }
