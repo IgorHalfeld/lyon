@@ -4,42 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="main.css">
   <title>Emilly <3</title>
 </head>
 <body>
-  <div id="app">
-    <h1 ly-bind="title"></h1>
-    <p ly-if="status">My awesome paragrapher as well <span ly-bind="age"></span></p>
-    <ul ly-for="item in list">
-      <li>{{item}}</li>
-    </ul>
-    <input type="text" ly-model="title">
-    <button ly-click="changeTitleName">Change title text</button>
-    <button ly-click="changeStatus">Change status</button>
+
+  <div id="editor">
+    <textarea ly-model="markdown" ly-event="input, parseMarkdown"></textarea>
+    <div ly-bind="markdownParsed"></div>
   </div>
 
+  <script src="https://unpkg.com/marked@0.3.6"></script>
   <script src="../dist/emilly.umd.js"></script>
   <script>
 
     const emilly = new Emilly({
-      container: 'app',
       observe: () => ({
-        title: 'My awesome title <3',
-        age: 19,
-        status: true,
-        list: ['Hello', 'Second', 332]
+        markdownParsed: '',
+        markdown: ''
       }),
       methods: {
-        changeTitleName () {
-          this.title = 'Another title'
-        },
-        changeStatus () {
-          this.status = !this.status
-          console.log('* Status', this.status)
+        parseMarkdown () {
+          this.markdownParsed = marked(this.markdown)
         }
       }
     })
-
   </script>
 </body>
 </html>

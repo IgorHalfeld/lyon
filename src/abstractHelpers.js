@@ -1,6 +1,5 @@
 import Observable from './observer/index'
 import {
-  lyFor,
   lyIf,
   lyModel
 } from './compiler/directives'
@@ -24,11 +23,9 @@ export default class AbstractHelpers {
   }
 
   bootstrapDirectives () {
-    const forStatments = [...document.querySelectorAll('[ly-for]')]
     const ifStatments = [...document.querySelectorAll('[ly-if]')]
     const modelStatments = [...document.querySelectorAll('[ly-model]')]
 
-    lyFor.call(this, forStatments)
     lyIf.call(this, ifStatments)
     lyModel.call(this, modelStatments)
   }
@@ -37,21 +34,27 @@ export default class AbstractHelpers {
     const elements = [...document.querySelectorAll('[ly-bind]')]
     elements.map((element) => {
       const key = element.getAttribute('ly-bind')
-      element.textContent = this.ob[key]
+      element.innerHTML = this.ob[key]
       this.$Observable.register({
         name: key,
         handler: () => {
-          element.textContent = this.ob[key]
+          element.innerHTML = this.ob[key]
         }
       })
     })
   }
 
   parseMethods (methods) {
-    const elements = [...document.querySelectorAll('[ly-click]')]
+    const elements = [...document.querySelectorAll('[ly-event]')]
     elements.map((element) => {
-      const methodName = element.getAttribute('ly-click')
-      element.addEventListener('click', methods[methodName].bind(this.ob), false)
+      let [
+        eventType,
+        methodName
+      ] = element.getAttribute('ly-event').split(',')
+
+      eventType = eventType.trim()
+      methodName = methodName.trim()
+      element.addEventListener(eventType, methods[methodName].bind(this.ob), false)
     })
   }
 }

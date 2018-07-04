@@ -16,27 +16,6 @@ class Observer {
   }
 }
 
-const lyFor = function (elements) {
-  console.log('lyFor', this);
-  elements.map((element) => {
-    const [ tmpVarName, arrayName ] = element
-      .getAttribute('ly-for')
-      .trim()
-      .split('in');
-    const template = element.innerHTML;
-    const templateVar = template.match(/\{\{.*\}\}/g)[0];
-    let templateTranspiled = '';
-
-    const iteratorLength = this.ob[arrayName.trim()].length;
-    for (let i = 0, l = iteratorLength; i < l; i++) {
-      // const varWithoutBrackets = templateVar.replace(/}}|{{/g,'')
-      templateTranspiled += template.replace(templateVar, this.ob[arrayName.trim()][i]);
-    }
-
-    element.innerHTML = templateTranspiled;
-  });
-};
-
 const lyIf = function (elements) {
   elements.map((element) => {
     const key = element.getAttribute('ly-if');
@@ -82,11 +61,9 @@ class AbstractHelpers {
   }
 
   bootstrapDirectives () {
-    const forStatments = [...document.querySelectorAll('[ly-for]')];
     const ifStatments = [...document.querySelectorAll('[ly-if]')];
     const modelStatments = [...document.querySelectorAll('[ly-model]')];
 
-    lyFor.call(this, forStatments);
     lyIf.call(this, ifStatments);
     lyModel.call(this, modelStatments);
   }
@@ -95,28 +72,33 @@ class AbstractHelpers {
     const elements = [...document.querySelectorAll('[ly-bind]')];
     elements.map((element) => {
       const key = element.getAttribute('ly-bind');
-      element.textContent = this.ob[key];
+      element.innerHTML = this.ob[key];
       this.$Observable.register({
         name: key,
         handler: () => {
-          element.textContent = this.ob[key];
+          element.innerHTML = this.ob[key];
         }
       });
     });
   }
 
   parseMethods (methods) {
-    const elements = [...document.querySelectorAll('[ly-click]')];
+    const elements = [...document.querySelectorAll('[ly-event]')];
     elements.map((element) => {
-      const methodName = element.getAttribute('ly-click');
-      element.addEventListener('click', methods[methodName].bind(this.ob), false);
+      let [
+        eventType,
+        methodName
+      ] = element.getAttribute('ly-event').split(',');
+
+      eventType = eventType.trim();
+      methodName = methodName.trim();
+      element.addEventListener(eventType, methods[methodName].bind(this.ob), false);
     });
   }
 }
 
 class Emilly extends AbstractHelpers {
-  constructor ({ container, observe = () => ({}), methods }) {
-    const target = document.getElementById(container);
+  constructor ({ observe = () => ({}), methods }) {
     super(observe());
     this.parseMethods(methods);
   }

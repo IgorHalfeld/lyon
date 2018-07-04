@@ -279,42 +279,18 @@ var Observer = function () {
   return Observer;
 }();
 
-var lyFor = function lyFor(elements) {
-  var _this = this;
-
-  console.log('lyFor', this);
-  elements.map(function (element) {
-    var _element$getAttribute = element.getAttribute('ly-for').trim().split('in'),
-        _element$getAttribute2 = slicedToArray(_element$getAttribute, 2),
-        tmpVarName = _element$getAttribute2[0],
-        arrayName = _element$getAttribute2[1];
-
-    var template = element.innerHTML;
-    var templateVar = template.match(/\{\{.*\}\}/g)[0];
-    var templateTranspiled = '';
-
-    var iteratorLength = _this.ob[arrayName.trim()].length;
-    for (var i = 0, l = iteratorLength; i < l; i++) {
-      // const varWithoutBrackets = templateVar.replace(/}}|{{/g,'')
-      templateTranspiled += template.replace(templateVar, _this.ob[arrayName.trim()][i]);
-    }
-
-    element.innerHTML = templateTranspiled;
-  });
-};
-
 var lyIf = function lyIf(elements) {
-  var _this2 = this;
+  var _this = this;
 
   elements.map(function (element) {
     var key = element.getAttribute('ly-if');
     var parent = element.parentNode;
     var nextNode = element.nextElementSibling;
 
-    _this2.$Observable.register({
+    _this.$Observable.register({
       name: key,
       handler: function handler() {
-        return _this2.ob[key] ? parent.insertBefore(element, nextNode) : parent.removeChild(element);
+        return _this.ob[key] ? parent.insertBefore(element, nextNode) : parent.removeChild(element);
       }
     });
   });
@@ -356,11 +332,9 @@ var AbstractHelpers = function () {
   createClass(AbstractHelpers, [{
     key: 'bootstrapDirectives',
     value: function bootstrapDirectives() {
-      var forStatments = [].concat(toConsumableArray(document.querySelectorAll('[ly-for]')));
       var ifStatments = [].concat(toConsumableArray(document.querySelectorAll('[ly-if]')));
       var modelStatments = [].concat(toConsumableArray(document.querySelectorAll('[ly-model]')));
 
-      lyFor.call(this, forStatments);
       lyIf.call(this, ifStatments);
       lyModel.call(this, modelStatments);
     }
@@ -372,11 +346,11 @@ var AbstractHelpers = function () {
       var elements = [].concat(toConsumableArray(document.querySelectorAll('[ly-bind]')));
       elements.map(function (element) {
         var key = element.getAttribute('ly-bind');
-        element.textContent = _this.ob[key];
+        element.innerHTML = _this.ob[key];
         _this.$Observable.register({
           name: key,
           handler: function handler() {
-            element.textContent = _this.ob[key];
+            element.innerHTML = _this.ob[key];
           }
         });
       });
@@ -386,10 +360,16 @@ var AbstractHelpers = function () {
     value: function parseMethods(methods) {
       var _this2 = this;
 
-      var elements = [].concat(toConsumableArray(document.querySelectorAll('[ly-click]')));
+      var elements = [].concat(toConsumableArray(document.querySelectorAll('[ly-event]')));
       elements.map(function (element) {
-        var methodName = element.getAttribute('ly-click');
-        element.addEventListener('click', methods[methodName].bind(_this2.ob), false);
+        var _element$getAttribute = element.getAttribute('ly-event').split(','),
+            _element$getAttribute2 = slicedToArray(_element$getAttribute, 2),
+            eventType = _element$getAttribute2[0],
+            methodName = _element$getAttribute2[1];
+
+        eventType = eventType.trim();
+        methodName = methodName.trim();
+        element.addEventListener(eventType, methods[methodName].bind(_this2.ob), false);
       });
     }
   }]);
@@ -400,15 +380,12 @@ var Emilly = function (_AbstractHelpers) {
   inherits(Emilly, _AbstractHelpers);
 
   function Emilly(_ref) {
-    var container = _ref.container,
-        _ref$observe = _ref.observe,
+    var _ref$observe = _ref.observe,
         observe = _ref$observe === undefined ? function () {
       return {};
     } : _ref$observe,
         methods = _ref.methods;
     classCallCheck(this, Emilly);
-
-    var target = document.getElementById(container);
 
     var _this = possibleConstructorReturn(this, (Emilly.__proto__ || Object.getPrototypeOf(Emilly)).call(this, observe()));
 
