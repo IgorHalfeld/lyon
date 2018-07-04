@@ -1,6 +1,6 @@
 ## Emilly
 
-> My own data-binding implementation engine.
+> My own data-binding implementation engine. see [emilly alive](https://codepen.io/Halfeld/pen/GGaodL)
 
 ### How to use
 
